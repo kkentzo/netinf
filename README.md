@@ -19,9 +19,11 @@ should be present in your system along with their respective header
 (development) files. The prerequisites for compiling `netinf` are as
 follows:
 
-1. [GNUStep](http://www.gnustep.org/)
+1. [GCC](http://gcc.gnu.org)
 
-2. [GNU Scientific Library](http://www.gnu.org/software/gsl) >= 1.15
+2. [GNUStep](http://www.gnustep.org/)
+
+3. [GNU Scientific Library](http://www.gnu.org/software/gsl)
 
 
 On Debian 7 (Wheezy), these requirements can be installed by running:
@@ -41,11 +43,11 @@ directory specified using the `--log_path` switch.
 
 The output files include:
 
-    * `solution.graph` : contains the directed graph that was
-      discovered by ACO, as a list of nodes, a `-` separator, and a
-      list of directed edges
+* `solution.graph` : contains the directed graph that was discovered
+       by ACO, as a list of nodes, a `-` separator, and a list of
+       directed edges
 
-    * `solution.errors` : contains the per-node RNN prediction errors
+* `solution.errors` : contains the per-node RNN prediction errors
 
-    * `settings` : a dump of the program's settings
+* `settings` : a dump of the program's settings
 
