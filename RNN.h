@@ -133,6 +133,7 @@ so w[i,j] indicates how target node i is regulated by regulator node j
 - (Dynamics *)predict:(Dynamics *)adyn
 	    forTarget:(int)trg;
 
+- (NSString *) description;
 
 @end
 
@@ -225,6 +226,8 @@ so w[i,j] indicates how target node i is regulated by regulator node j
 - (Dynamics *)predict:(Dynamics *)adyn;
 - (Dynamics *)predict:(Dynamics *)adyn
 	    forTarget:(int)trg;
+
+- (NSString *) description;
 
 @end
 

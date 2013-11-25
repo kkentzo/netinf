@@ -11,7 +11,7 @@
 // return an array with the NSNumbers from lo
 // up to (and excluding) hi
 + (id) arrayWithRangeFrom:(int)lo
-		       to:(int)hi;
+                       to:(int)hi;
 
 // select and return a random object from self
 - (id) selectWithRNG:(RNG *)rng;
@@ -19,14 +19,14 @@
 // select n unique objects chosen at random from the array
 // and return them in a new array
 - (NSMutableArray *) select:(int)n
-		    withRNG:(RNG *)rng;
+                    withRNG:(RNG *)rng;
 
 // select n unique objects chosen at random from the array
 // perform sel on them and add the resulting objects
 // to a new array
 - (NSMutableArray *) select:(int)n
-		    withRNG:(RNG *)rng
-	    andSelectorName:(NSString *)sel_name;
+                    withRNG:(RNG *)rng
+            andSelectorName:(NSString *)sel_name;
 
 
 @end
@@ -49,7 +49,7 @@
 // remove n unique objects chosen at random from the array
 // and return them in a new array
 - (NSMutableArray *) remove:(int)n
-		    withRNG:(RNG *)rng;
+withRNG:(RNG *)rng;
 
 @end
 
@@ -73,28 +73,6 @@
 @end
 
 
-//=================================================================
-//             A CLASS TO ENCAPSULATE C OBJECTS
-//=================================================================
-@interface Capsule : NSObject {
-
-    void *ptr;
-
-}
-
-
-+ (id) capsule:(void *)ptr;
-
-- (id) initWithPointer:(void *)ptr_;
-
-- (void) dealloc;
-
-- (void *) get;
-
-
-@end
-
-
 
 //=================================================================
 //                     A COUNTER CLASS
@@ -103,7 +81,7 @@
 
 @interface Counter : NSObject {
 
-    int val;
+  int val;
 
 }
 
@@ -141,8 +119,8 @@
 
 @interface PoolOfCounters : NSObject {
 
-    NSMutableDictionary *pool;
-    int totalCount;
+  NSMutableDictionary *pool;
+  int totalCount;
 
 }
 
@@ -183,10 +161,10 @@
 // update pool
 - (void) inc:(id)obj;
 - (void) inc:(id)obj
-	  by:(int)step;
+by:(int)step;
 - (void) dec:(id)obj;
 - (void) dec:(id)obj
-	  by:(int)step;
+by:(int)step;
 
 
 // updates self with other's entries (obj,counter pairs)
@@ -203,8 +181,8 @@
 //=================================================================
 @interface PoolOfSums : NSObject {
 
-    NSMutableDictionary *pool;
-    double totalSum;
+  NSMutableDictionary *pool;
+  double totalSum;
 
 }
 
@@ -231,10 +209,10 @@
 
 // update pool
 - (void) inc:(id)obj
-	  by:(double)amount;
+by:(double)amount;
 
 - (void) dec:(id)obj
-	  by:(double)amount;
+by:(double)amount;
 
 
 

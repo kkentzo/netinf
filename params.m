@@ -17,6 +17,7 @@ params_t settings = {
     nil, // log_path
     0, // seed
     NO, // compress
+    NO, // train
     nil, // the RNG
 
     nil, // tdata
@@ -57,13 +58,14 @@ params_t settings = {
 
 void print_help() {
 
-    printf("Usage: netinf [options] PATH_TO_DATASET\n");
+  printf("Usage: netinf [options] PATH_TO_DATASET\n");
     printf("Output : the solution graph (if log_path is not defined)\n");
     printf("Options :\n");
     printf("GENERAL PARAMETERS\n");
     printf("  --log_path DIRECTORY : where to save logs\n");
     printf("  --seed LONG : set the seed of the random number generator\n");
     printf("  -z or --compress : whether to compress the log_path directory\n");
+    printf("  -t or --train : whether to just train an existing solution.graph file\n");
 
     printf("MODEL PARAMETERS\n");
     printf("  --gmodel INT : set generative model to use in ACO (0:phero, 1:edsf)\n");
@@ -157,6 +159,7 @@ int parse_settings(int argc, char **argv) {
 	    {LOG_PATH, required_argument, 0, 0},
 	    {SEED, required_argument, 0, 0},
 	    {COMPRESS, no_argument, 0, 'z'},
+	    {TRAIN, no_argument, 0, 't'},
 
 	    {GMODEL, required_argument, 0, 0},
 	    {RNN_TYPE, required_argument, 0, 0},
@@ -185,7 +188,7 @@ int parse_settings(int argc, char **argv) {
 	    {0, 0, 0, 0}
 	};
 
-	c = getopt_long(argc, argv, "zvpdh",
+	c = getopt_long(argc, argv, "ztvpdh",
 			long_options, &option_index);
 	if (c == -1)
 	    break;
@@ -248,6 +251,11 @@ int parse_settings(int argc, char **argv) {
 	    settings.compress = YES;
 	    break;
 
+	case 't':
+	    printf("\n");
+	    settings.train = YES;
+	    break;
+
 	case 'p':
 	    printf("Printing PSO output\n");
 	    settings.print_pso = YES;
@@ -267,6 +275,10 @@ int parse_settings(int argc, char **argv) {
     }
 
     // is a log_path defined??
+    if (! settings.log_path) {
+      printf("netinf: please specify a log path using the --log_path switch\n");
+      return -1;
+    }
 
     // do we have 1 argument remaining??
     if (argc - optind != 1) {

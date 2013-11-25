@@ -759,6 +759,20 @@ double local_pso_obj_fun_with_graph(double *vec, size_t dim, void *params) {
 }
 
 
+- (NSString *) description {
+
+  NSMutableString *st = [NSMutableString string];
+
+  [st appendString:@"W=\n"];
+  [st appendString:[W description]];
+  [st appendString:@"\nB=\n"];
+  [st appendString:[B description]];
+
+  return st;
+
+}
+
+
 @end
 
 
@@ -1232,6 +1246,20 @@ double local_pso_obj_fun_with_graph(double *vec, size_t dim, void *params) {
     return [pdyn autorelease];
 
 }
+
+
+
+- (NSString *) description {
+
+  NSMutableString *st = [super description];
+
+  [st appendString:@"\nT=\n"];
+  [st appendString:[T description]];
+
+  return st;
+
+}
+
 
 
 @end

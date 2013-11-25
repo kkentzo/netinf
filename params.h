@@ -29,6 +29,7 @@
 #define LOG_PATH "log_path"
 #define SEED "seed"
 #define COMPRESS "compress"
+#define TRAIN "train"
 
 #define GMODEL "gmodel"
 #define RNN_TYPE "rnn_type"
@@ -64,49 +65,50 @@ void save_settings();
 // program settings
 typedef struct {
 
-    // GENERAL PARAMETERS
-    NSString *dpath; // path to the data set
-    NSString *log_path; // path to save logs
-    unsigned long seed; // the seed of the RNG
-    BOOL compress; // whether to compress log_path upon exit
-    RNG *rng; // the random number generator
+  // GENERAL PARAMETERS
+  NSString *dpath; // path to the data set
+  NSString *log_path; // path to save logs
+  unsigned long seed; // the seed of the RNG
+  BOOL compress; // whether to compress log_path upon exit
+  BOOL train; // whether to train a solution graph
+  RNG *rng; // the random number generator
 
-    // DATA
-    Dynamics *tdata; // the training data
-    Dynamics *vdata; // the validation data (could be nil) NOT WORKING AT THE MOMENT
-    int nodes; // the number of nodes in the graph (automatically set)
-    int tpoints; // the number of time points in the time series (automatically set)
+  // DATA
+  Dynamics *tdata; // the training data
+  Dynamics *vdata; // the validation data (could be nil) NOT WORKING AT THE MOMENT
+  int nodes; // the number of nodes in the graph (automatically set)
+  int tpoints; // the number of time points in the time series (automatically set)
 
-    // TIMING
-    NSDate *start; // starting point in time of the simulation
-    unsigned long duration; // set at the end of the simulation
+  // TIMING
+  NSDate *start; // starting point in time of the simulation
+  unsigned long duration; // set at the end of the simulation
 
-    // model parameters
-    int gmodel; // which model to use for generating solutions
-    int rnn_type; // RNN type to use
-    Class rnn_class; // RNN class to use
-    BOOL decomposition; // whether to activate problem decomposition
+  // model parameters
+  int gmodel; // which model to use for generating solutions
+  int rnn_type; // RNN type to use
+  Class rnn_class; // RNN class to use
+  BOOL decomposition; // whether to activate problem decomposition
 
-    // eDSF model parameters
-    int edsf_start_with; // the initial number of nodes in the eDSF model
-    double edsf_alpha;
-    double edsf_beta;
-    double edsf_gamma;
-    double edsf_delta_in;
-    double edsf_delta_out;
+  // eDSF model parameters
+  int edsf_start_with; // the initial number of nodes in the eDSF model
+  double edsf_alpha;
+  double edsf_beta;
+  double edsf_gamma;
+  double edsf_delta_in;
+  double edsf_delta_out;
 
-    // ACO parameters
-    double aco_alpha; // exponent of the heuristic component
-    double aco_beta; // exponent of the stigmergic component
-    int aco_steps; // number of steps in ACO simulation
-    int aco_ants; // number of ants
-    double aco_phero_val; // initial value for the pheromome matrix
-    double aco_rho; // pheromone evaporation rate
-    double aco_lamda; // the lamda factor
+  // ACO parameters
+  double aco_alpha; // exponent of the heuristic component
+  double aco_beta; // exponent of the stigmergic component
+  int aco_steps; // number of steps in ACO simulation
+  int aco_ants; // number of ants
+  double aco_phero_val; // initial value for the pheromome matrix
+  double aco_rho; // pheromone evaporation rate
+  double aco_lamda; // the lamda factor
 
-    // PSO parameters
-    int pso_steps; // the number of PSO steps
-    BOOL print_pso; // whether to print output from PSO (every 100 steps)
+  // PSO parameters
+  int pso_steps; // the number of PSO steps
+  BOOL print_pso; // whether to print output from PSO (every 100 steps)
 
 
 } params_t;

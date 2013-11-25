@@ -19,14 +19,14 @@
 
 + (id) arrayFromArray:(NSArray *)arr withSelector:(SEL)sel {
 
-    int len = [arr count];
-    int i;
-    NSMutableArray *newarr = [NSMutableArray arrayWithCapacity:len];
+  int len = [arr count];
+  int i;
+  NSMutableArray *newarr = [NSMutableArray arrayWithCapacity:len];
 
-    for (i=0; i<len; i++)
-	[newarr insertObject:[[arr objectAtIndex:i] performSelector:@selector(sel)] atIndex:i];
+  for (i=0; i<len; i++)
+    [newarr insertObject:[[arr objectAtIndex:i] performSelector:@selector(sel)] atIndex:i];
 
-    return newarr;
+  return newarr;
     
 }
 
@@ -35,14 +35,14 @@
 		       to:(int)hi
 {
 
-    NSAssert(hi-lo>=0, @"hi-lo should be >= 0");
-    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:hi-lo];
-    int i;
+  NSAssert(hi-lo>=0, @"hi-lo should be >= 0");
+  NSMutableArray *arr = [NSMutableArray arrayWithCapacity:hi-lo];
+  int i;
 
-    for (i=lo; i<hi; i++)
-	[arr addObject:[NSNumber numberWithInt:i]];
+  for (i=lo; i<hi; i++)
+    [arr addObject:[NSNumber numberWithInt:i]];
 
-    return arr;
+  return arr;
 }
 
 
@@ -50,7 +50,7 @@
 // select and return a random object from self
 - (id) selectWithRNG:(RNG *)rng {
 
-    return [self objectAtIndex:[rng getUniformIntWithMax:[self count]]];
+  return [self objectAtIndex:[rng getUniformIntWithMax:[self count]]];
 
 }
     
@@ -61,9 +61,9 @@
 		    withRNG:(RNG *)rng 
 {
 
-    return [self select:n
-		withRNG:rng
-		 andSelectorName:nil];
+  return [self select:n
+	      withRNG:rng
+	       andSelectorName:nil];
 
 }
 
@@ -76,26 +76,26 @@
 {
 
 
-    if (n > [self count])
-	return nil;
+  if (n > [self count])
+    return nil;
     
-    // create the new array
-    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:n];
-    // create selector (could be 0x0 if sel_name is nil)
-    SEL sel = NSSelectorFromString(sel_name);
+  // create the new array
+  NSMutableArray *arr = [NSMutableArray arrayWithCapacity:n];
+  // create selector (could be 0x0 if sel_name is nil)
+  SEL sel = NSSelectorFromString(sel_name);
 
-    // form array of indices
-    NSMutableArray *indices = [NSArray arrayWithRangeFrom:0 
-						       to:[self count]];
+  // form array of indices
+  NSMutableArray *indices = [NSArray arrayWithRangeFrom:0 
+						     to:[self count]];
 
-    while ([arr count] < n)
-	if (sel)
-	    [arr addObject:[[self objectAtIndex:[[indices popWithRNG:rng] intValue]]
+  while ([arr count] < n)
+    if (sel)
+      [arr addObject:[[self objectAtIndex:[[indices popWithRNG:rng] intValue]]
 			       performSelector:sel]];
-	else
-	    [arr addObject:[self objectAtIndex:[[indices popWithRNG:rng] intValue]]];
+    else
+      [arr addObject:[self objectAtIndex:[[indices popWithRNG:rng] intValue]]];
 
-    return arr;
+  return arr;
 }
 
 
@@ -114,11 +114,11 @@
 
 - (id) pop {
 
-    id obj = [[self lastObject] retain];
-    if (obj)
-	[self removeLastObject];
+  id obj = [[self lastObject] retain];
+  if (obj)
+    [self removeLastObject];
 
-    return [obj autorelease];
+  return [obj autorelease];
 
 }
 
@@ -127,36 +127,36 @@
 
 - (id) popAtIndex:(int)index {
 
-    id obj = [[self objectAtIndex:index] retain];
-    if (obj)
-	[self removeObjectAtIndex:index];
+  id obj = [[self objectAtIndex:index] retain];
+  if (obj)
+    [self removeObjectAtIndex:index];
 
-    return [obj autorelease];
+  return [obj autorelease];
 
 }
 
 
 - (id) popWithRNG:(RNG *)rng {
 
-    return [self popAtIndex:[rng getUniformIntWithMax:[self count]]];
+  return [self popAtIndex:[rng getUniformIntWithMax:[self count]]];
 
 }
 
 
 
 - (NSMutableArray *) remove:(int)n
-	     withRNG:(RNG *)rng
+		    withRNG:(RNG *)rng
 {
 
-    if (n > [self count])
-	return nil;
+  if (n > [self count])
+    return nil;
 
-    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:n];
+  NSMutableArray *arr = [NSMutableArray arrayWithCapacity:n];
 
-    while ([arr count] < n) 
-	[arr addObject:[self popWithRNG:rng]];
+  while ([arr count] < n) 
+    [arr addObject:[self popWithRNG:rng]];
 
-    return arr;
+  return arr;
 }
 
 @end
@@ -168,8 +168,8 @@
 
 typedef struct {
 
-    NSMutableString *token;
-    NSMutableString *rest;
+  NSMutableString *token;
+  NSMutableString *rest;
 
 } tuple_t;
 
@@ -177,33 +177,33 @@ typedef struct {
 
 void _get_next_token_(tuple_t *tuple) {
 
-    // strip rest
-    tuple->rest = [NSMutableString stringByStrippingString:tuple->rest];
-    // iterate over string characters
-    int i, ctr = 0, len=[tuple->rest length];
-    unichar ch;
-    for (i=0; i<len; i++) {
-	// get character from rest
-	ch = [tuple->rest characterAtIndex:i];
-	if (ch == '(')
-	    ctr += 1; // push parenthesis
-	if (ch == ')')
-	    ctr -= 1; // pop parenthesis
-	// add character to token
-	// NSString *ccc = [NSString stringWithFormat:@"%c", ch];
-	// printf("%s\n", [ccc UTF8String]);
-	// [tuple->token appendString:ccc];
-	[tuple->token appendFormat:@"%c", ch];
-	if (ctr == 0 && isspace(ch)) {
-	    tuple->token = [NSMutableString stringByStrippingString:tuple->token];
-	    tuple->rest = (NSMutableString *)[tuple->rest substringFromIndex:i+1]; 
-	    return;
-	}
+  // strip rest
+  tuple->rest = [NSMutableString stringByStrippingString:tuple->rest];
+  // iterate over string characters
+  int i, ctr = 0, len=[tuple->rest length];
+  unichar ch;
+  for (i=0; i<len; i++) {
+    // get character from rest
+    ch = [tuple->rest characterAtIndex:i];
+    if (ch == '(')
+      ctr += 1; // push parenthesis
+    if (ch == ')')
+      ctr -= 1; // pop parenthesis
+    // add character to token
+    // NSString *ccc = [NSString stringWithFormat:@"%c", ch];
+    // printf("%s\n", [ccc UTF8String]);
+    // [tuple->token appendString:ccc];
+    [tuple->token appendFormat:@"%c", ch];
+    if (ctr == 0 && isspace(ch)) {
+      tuple->token = [NSMutableString stringByStrippingString:tuple->token];
+      tuple->rest = (NSMutableString *)[tuple->rest substringFromIndex:i+1]; 
+      return;
     }
+  }
 
-    // final token return - strip and return
-    tuple->token = [NSMutableString stringByStrippingString:tuple->token];
-    tuple->rest = [NSMutableString stringWithString:@""];
+  // final token return - strip and return
+  tuple->token = [NSMutableString stringByStrippingString:tuple->token];
+  tuple->rest = [NSMutableString stringWithString:@""];
 
 }
 
@@ -217,90 +217,47 @@ void _get_next_token_(tuple_t *tuple) {
 
 + (id) stringByStrippingString:(NSString *)st {
 
-    return [st stringByTrimmingCharactersInSet:
-		   [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+  return [st stringByTrimmingCharactersInSet:
+	       [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
 }
 
 
 - (NSArray *) tokenize {
 
-    // create array to be returned
-    NSMutableArray *tokens = [NSMutableArray array];
+  // create array to be returned
+  NSMutableArray *tokens = [NSMutableArray array];
     
-    if ([self length] == 0 ||  // self should not be empty
-	(! ([self characterAtIndex:0] == '(' && // it should start with a '('
-	    [self characterAtIndex:[self length]-1] == ')'))) // and end with a ')'
-	return tokens;
-
-    tuple_t tuple; 
-    NSRange range;
-    range.location = 1;
-    range.length = [self length] - 2;
-    tuple.token = [NSMutableString string];
-    tuple.rest = (NSMutableString *)[self substringWithRange:range];
-    while (! [tuple.rest isEqualToString:@""]) {
-	// parse next token and store it in tuple.token
-	// store rest in tuple.rest
-	_get_next_token_(&tuple);
-	//printf("TOKEN : __%s__\n", [tuple.token UTF8String]);
-	// add token to tokens list
-	[tokens addObject:tuple.token];
-	// reset token
-	tuple.token = [NSMutableString string];
-    }
-
+  if ([self length] == 0 ||  // self should not be empty
+      (! ([self characterAtIndex:0] == '(' && // it should start with a '('
+	  [self characterAtIndex:[self length]-1] == ')'))) // and end with a ')'
     return tokens;
 
-}
+  tuple_t tuple; 
+  NSRange range;
+  range.location = 1;
+  range.length = [self length] - 2;
+  tuple.token = [NSMutableString string];
+  tuple.rest = (NSMutableString *)[self substringWithRange:range];
+  while (! [tuple.rest isEqualToString:@""]) {
+    // parse next token and store it in tuple.token
+    // store rest in tuple.rest
+    _get_next_token_(&tuple);
+    //printf("TOKEN : __%s__\n", [tuple.token UTF8String]);
+    // add token to tokens list
+    [tokens addObject:tuple.token];
+    // reset token
+    tuple.token = [NSMutableString string];
+  }
 
-
-@end
-
-
-
-
-//=================================================================
-//             A CLASS TO ENCAPSULATE C OBJECTS
-//=================================================================
-@implementation Capsule
-
-+ (id) capsule:(void *)ptr {
-
-    return [[[Capsule alloc] initWithPointer:ptr]
-	       autorelease];
-
-}
-
-- (id) initWithPointer:(void *)ptr_ {
-
-    self = [super init];
-    if (!self)
-	return nil;
-
-    ptr = ptr_;
-
-    return self;
-
-}
-
-
-- (void) dealloc {
-
-    free(ptr);
-    [super dealloc];
-
-}
-
-
-- (void *) get {
-
-    return ptr;
+  return tokens;
 
 }
 
 
 @end
+
+
 
 
 
@@ -316,14 +273,14 @@ void _get_next_token_(tuple_t *tuple) {
 
 + (id) counter {
 
-    return [[[Counter alloc] init] autorelease];
+  return [[[Counter alloc] init] autorelease];
 
 }
 
 
 + (id) counterWithValue:(int)val_ {
 
-    return [[[Counter alloc] initWithValue:val_] autorelease];
+  return [[[Counter alloc] initWithValue:val_] autorelease];
 }
 
 
@@ -331,59 +288,59 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (id) init {
 
-    self = [self initWithValue:0];
-    return self;
+  self = [self initWithValue:0];
+  return self;
 
 }
 
 
 - (id) initWithValue:(int)val_ {
 
-    self = [super init];
-    if (!self) 
-	return nil;
+  self = [super init];
+  if (!self) 
+    return nil;
 
-    val = val_;
+  val = val_;
 
-    return self;
+  return self;
 
 }
 
 
 - (void) inc {
-    ++val;
+  ++val;
 }
     
 - (void) incWithStep:(int)step {
-    val += step;
+  val += step;
 }
 
 
 - (void) dec {
-    --val;
+  --val;
 }
 
 
 - (void) decWithStep:(int)step {
-    val -= step;
+  val -= step;
 }
 
 
 - (void) updateWith:(Counter *)other {
 
-    val += [other value];
+  val += [other value];
 
 }
 
 
 - (int) value {
-    return val;
+  return val;
 }
 
 
 - (void) reset {
 
-    val = 0;
+  val = 0;
 
 }
 
@@ -391,7 +348,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (NSString *) description {
 
-    return [NSString stringWithFormat:@"%d", val];
+  return [NSString stringWithFormat:@"%d", val];
 
 }
 
@@ -411,7 +368,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 + (id) pool {
 
-    return [[[PoolOfCounters alloc] init] autorelease];
+  return [[[PoolOfCounters alloc] init] autorelease];
 
 }
 
@@ -419,23 +376,23 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (id) init {
 
-    self = [super init];
-    if (!self)
-	return nil;
+  self = [super init];
+  if (!self)
+    return nil;
 
-    // initialize dictionary
-    pool = [[NSMutableDictionary alloc] init];
-    totalCount = 0;
+  // initialize dictionary
+  pool = [[NSMutableDictionary alloc] init];
+  totalCount = 0;
 
-    return self;
+  return self;
 
 }
 
 
 - (void) dealloc {
 
-    [pool release];
-    [super dealloc];
+  [pool release];
+  [super dealloc];
 
 }
 
@@ -443,7 +400,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (int) count {
 
-    return [pool count];
+  return [pool count];
 
 }
 
@@ -451,7 +408,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (int) totalCount {
 
-    return totalCount;
+  return totalCount;
 
 }
 
@@ -459,7 +416,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (int) countOf:(id)obj {
 
-    return [(Counter *)[pool objectForKey:obj] value];
+  return [(Counter *)[pool objectForKey:obj] value];
 
 }
 
@@ -467,14 +424,14 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (int) countZeroEntries {
 
-    NSArray *values = [pool allValues];
-    int i, count = 0;
+  NSArray *values = [pool allValues];
+  int i, count = 0;
 
-    for (i=0; i<[values count]; i++)
-	if ([(Counter *)[values objectAtIndex:i] value] == 0)
-	    count ++;
+  for (i=0; i<[values count]; i++)
+    if ([(Counter *)[values objectAtIndex:i] value] == 0)
+      count ++;
 
-    return count;
+  return count;
 
 }
 
@@ -482,7 +439,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (int) countNonZeroEntries {
 
-    return [self count] - [self countZeroEntries];
+  return [self count] - [self countZeroEntries];
 
 }
 
@@ -490,7 +447,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (double) proportionOfObject:(id)obj {
 
-    return 1. * [self countOf:obj] / totalCount;
+  return 1. * [self countOf:obj] / totalCount;
 
 }
 
@@ -498,7 +455,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (NSArray *) objects {
 
-    return [pool allKeys];
+  return [pool allKeys];
 
 }
 
@@ -507,7 +464,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (void) empty {
 
-    [pool removeAllObjects];
+  [pool removeAllObjects];
 
 }
 
@@ -516,8 +473,8 @@ void _get_next_token_(tuple_t *tuple) {
 // update pool
 - (void) inc:(id)obj {
 
-    [self inc:obj by:1];
-    // ** totalCount is updated in inc:by:
+  [self inc:obj by:1];
+  // ** totalCount is updated in inc:by:
 
 }
 
@@ -527,26 +484,26 @@ void _get_next_token_(tuple_t *tuple) {
 	  by:(int)step
 {
 
-    // does object exist in pool??
-    Counter *cnt = [pool objectForKey:obj];
-    if (cnt)
-	// yes : increase counter by step
-	[cnt incWithStep:step];
-    else 
-	// no : add entry for object with a count of step
-	[pool setObject:[Counter counterWithValue:step]
-		 forKey:obj];
+  // does object exist in pool??
+  Counter *cnt = [pool objectForKey:obj];
+  if (cnt)
+    // yes : increase counter by step
+    [cnt incWithStep:step];
+  else 
+    // no : add entry for object with a count of step
+    [pool setObject:[Counter counterWithValue:step]
+	     forKey:obj];
 
-    // increase total count
-    totalCount += step;
+  // increase total count
+  totalCount += step;
 }
 
 
 
 - (void) dec:(id)obj {
 
-    [self dec:obj by:1];
-    // ** totalCount is updated in dec:by:
+  [self dec:obj by:1];
+  // ** totalCount is updated in dec:by:
 
 }
 
@@ -556,22 +513,22 @@ void _get_next_token_(tuple_t *tuple) {
 	  by:(int)step
 {
 
-    // does object exist in pool??
-    Counter *cnt = [pool objectForKey:obj];
-    if (cnt) {
-	NSAssert([cnt value] >= step, @"Error in dec:by:");
+  // does object exist in pool??
+  Counter *cnt = [pool objectForKey:obj];
+  if (cnt) {
+    NSAssert([cnt value] >= step, @"Error in dec:by:");
 
-	// yes : decrease counter by step
-	[cnt decWithStep:step];
-	// update totalCount
-	totalCount -= step;
-	// has count reached 0??
-	if ([cnt value] == 0)
-	    // remove object from pool
-	    [pool removeObjectForKey:obj];
-    } else
-	// this shouldn't have happened!!
-	NSLog(@"Error in Pool dec: object does not exist!");
+    // yes : decrease counter by step
+    [cnt decWithStep:step];
+    // update totalCount
+    totalCount -= step;
+    // has count reached 0??
+    if ([cnt value] == 0)
+      // remove object from pool
+      [pool removeObjectForKey:obj];
+  } else
+    // this shouldn't have happened!!
+    NSLog(@"Error in Pool dec: object does not exist!");
 	
 }
 
@@ -579,11 +536,11 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (void) updateWith:(PoolOfCounters *)other {
 
-    NSEnumerator *okeys = [[other objects] objectEnumerator];
-    id obj;
+  NSEnumerator *okeys = [[other objects] objectEnumerator];
+  id obj;
 
-    while ((obj = [okeys nextObject]))
-	[self inc:obj by:[other countOf:obj]];
+  while ((obj = [okeys nextObject]))
+    [self inc:obj by:[other countOf:obj]];
 
 
 }
@@ -591,30 +548,30 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (NSString *) description {
 
-    NSMutableString *desc = [NSMutableString string];
-    // open parenthesis
-    [desc appendString:@"("];
+  NSMutableString *desc = [NSMutableString string];
+  // open parenthesis
+  [desc appendString:@"("];
 
-    if (totalCount > 0) {
-	NSEnumerator *keys = [pool keyEnumerator];
-	id key;
+  if (totalCount > 0) {
+    NSEnumerator *keys = [pool keyEnumerator];
+    id key;
 
-	while ((key = [keys nextObject]))
-	    [desc appendFormat:@"(%@ %d) ", 
-		  [key description], 
-		 [self countOf:key]];
+    while ((key = [keys nextObject]))
+      [desc appendFormat:@"(%@ %d) ", 
+	    [key description], 
+	   [self countOf:key]];
 
-	// remove last space
-	NSRange range;
-	range.location = [desc length] - 1;
-	range.length = 1;
-	[desc deleteCharactersInRange:range];
-    }
+    // remove last space
+    NSRange range;
+    range.location = [desc length] - 1;
+    range.length = 1;
+    [desc deleteCharactersInRange:range];
+  }
 
-    // close parenthesis
-    [desc appendString:@")"];
+  // close parenthesis
+  [desc appendString:@")"];
 
-    return desc;
+  return desc;
 }
 
 @end
@@ -628,7 +585,7 @@ void _get_next_token_(tuple_t *tuple) {
 // initialization / termination
 + (id) pool {
 
-    return [[[PoolOfSums alloc] init] autorelease];
+  return [[[PoolOfSums alloc] init] autorelease];
 
 }
 
@@ -636,23 +593,23 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (id) init {
 
-    self = [super init];
-    if (!self)
-	return nil;
+  self = [super init];
+  if (!self)
+    return nil;
 
-    // initialize dictionary
-    pool = [[NSMutableDictionary alloc] init];
-    totalSum = 0.;
+  // initialize dictionary
+  pool = [[NSMutableDictionary alloc] init];
+  totalSum = 0.;
 
-    return self;
+  return self;
 
 }    
 
 
 - (void) dealloc {
 
-    [pool release];
-    [super dealloc];
+  [pool release];
+  [super dealloc];
 
 }
 
@@ -660,7 +617,7 @@ void _get_next_token_(tuple_t *tuple) {
 // get info
 - (int) count {
 
-    return [pool count];
+  return [pool count];
 
 }
 
@@ -668,7 +625,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (double) totalSum {
 
-    return totalSum;
+  return totalSum;
 
 }
 
@@ -676,7 +633,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (double) sumOf:(id)obj {
 
-    return [(NSNumber *)[pool objectForKey:obj] doubleValue];
+  return [(NSNumber *)[pool objectForKey:obj] doubleValue];
 
 }
 
@@ -686,7 +643,7 @@ void _get_next_token_(tuple_t *tuple) {
 // i.e. countOf:obj / totalCount
 - (double) proportionOfObject:(id)obj {
 
-    return 1. * [self sumOf:obj] / totalSum;
+  return 1. * [self sumOf:obj] / totalSum;
 
 }
 
@@ -694,7 +651,7 @@ void _get_next_token_(tuple_t *tuple) {
 
 - (NSArray *) objects {
 
-    return [pool allKeys];
+  return [pool allKeys];
 
 }
 
@@ -703,7 +660,7 @@ void _get_next_token_(tuple_t *tuple) {
 // remove all entries (empty pool)
 - (void) empty {
 
-    [pool removeAllObjects];
+  [pool removeAllObjects];
 
 }
 
@@ -717,19 +674,19 @@ void _get_next_token_(tuple_t *tuple) {
 	  by:(double)amount 
 {
 
-    // does object exist in pool??
-    NSNumber *sum = [pool objectForKey:obj];
-    if (sum)
-	// yes : increase sum by amount
-	[pool setObject:[NSNumber numberWithDouble:[sum doubleValue] + amount]
-		 forKey:obj];
-    else 
-	// no : add entry for object with a sum of amount
-	[pool setObject:[NSNumber numberWithDouble:amount]
-		 forKey:obj];
+  // does object exist in pool??
+  NSNumber *sum = [pool objectForKey:obj];
+  if (sum)
+    // yes : increase sum by amount
+    [pool setObject:[NSNumber numberWithDouble:[sum doubleValue] + amount]
+	     forKey:obj];
+  else 
+    // no : add entry for object with a sum of amount
+    [pool setObject:[NSNumber numberWithDouble:amount]
+	     forKey:obj];
 
-    // increase total sum
-    totalSum += amount;
+  // increase total sum
+  totalSum += amount;
 
 
 }
@@ -738,18 +695,18 @@ void _get_next_token_(tuple_t *tuple) {
 	  by:(double)amount 
 {
 
-    // does object exist in pool??
-    NSNumber *sum = [pool objectForKey:obj];
-    if (sum) {
-	// yes : decrease sum by amount
-	[pool setObject:[NSNumber numberWithDouble:[sum doubleValue] - amount]
-		 forKey:obj];
-	// update total sum
-	totalSum -= amount;
+  // does object exist in pool??
+  NSNumber *sum = [pool objectForKey:obj];
+  if (sum) {
+    // yes : decrease sum by amount
+    [pool setObject:[NSNumber numberWithDouble:[sum doubleValue] - amount]
+	     forKey:obj];
+    // update total sum
+    totalSum -= amount;
 
-    } else
-	// this shouldn't have happened!!
-	NSLog(@"Error in PoolOfSums dec: object does not exist!");
+  } else
+    // this shouldn't have happened!!
+    NSLog(@"Error in PoolOfSums dec: object does not exist!");
 
 }
 
@@ -772,27 +729,27 @@ void _get_next_token_(tuple_t *tuple) {
 
 NSString *sec_to_nsstring(long sec) {
 
-    long days, hours, mins;
-    ldiv_t res;
+  long days, hours, mins;
+  ldiv_t res;
 
-    sec = labs(sec);
+  sec = labs(sec);
 
-    //NSLog(@"%ld", sec);
+  //NSLog(@"%ld", sec);
     
-    res = ldiv(sec, 60);
-    mins = res.quot;
-    sec = res.rem;
+  res = ldiv(sec, 60);
+  mins = res.quot;
+  sec = res.rem;
 
-    res = ldiv(mins, 60);
-    hours = res.quot;
-    mins = res.rem;
+  res = ldiv(mins, 60);
+  hours = res.quot;
+  mins = res.rem;
 
-    res = ldiv(hours, 24);
-    days = res.quot;
-    hours = res.rem;
+  res = ldiv(hours, 24);
+  days = res.quot;
+  hours = res.rem;
 
-    return [NSString stringWithFormat:
-			 @"%ldd %02ld:%02ld:%02ld", days, hours, mins, sec];
+  return [NSString stringWithFormat:
+		       @"%ldd %02ld:%02ld:%02ld", days, hours, mins, sec];
 
 }
 
@@ -812,50 +769,50 @@ NSString *sec_to_nsstring(long sec) {
 
 unsigned long lurand() {
 
-    unsigned long val;
-    FILE *fp = fopen("/dev/urandom", "rb");
-    fread(&val, sizeof val, 1, fp);
-    fclose(fp);
+  unsigned long val;
+  FILE *fp = fopen("/dev/urandom", "rb");
+  fread(&val, sizeof val, 1, fp);
+  fclose(fp);
 
-    return val;
+  return val;
 
 }
 
 
 int gsl_roulette(const GSLVector *probs, RNG *rng) {
 
-    int i;
-    double r, csum;
-    int size = [probs count];
+  int i;
+  double r, csum;
+  int size = [probs count];
 
-    // draw a random number in [0,1]
-    r = [rng getUniform];
-    // spin the wheel
-    csum = 0.;
-    for (i=0; i < size; i++) {
-	csum += [probs valueAtIndex:i];
-	if (r < csum)
-	    return i;
-    }
+  // draw a random number in [0,1]
+  r = [rng getUniform];
+  // spin the wheel
+  csum = 0.;
+  for (i=0; i < size; i++) {
+    csum += [probs valueAtIndex:i];
+    if (r < csum)
+      return i;
+  }
 
-    // return last vector index
-    return --i;
+  // return last vector index
+  return --i;
 
 }
 
 
 double sigmoid0(double x, double mu, double lamda) {
 
-    return lamda / (1 + exp(- mu * x));
+  return lamda / (1 + exp(- mu * x));
 
 }
 
 
 double sigmoid1(double x, double mu, double lamda) {
 
-    double h = exp(-mu*x);
+  double h = exp(-mu*x);
 
-    return lamda * (1 - h) / (2 * (1 + h));
+  return lamda * (1 - h) / (2 * (1 + h));
 
 }
 
@@ -867,27 +824,26 @@ double sigmoid1(double x, double mu, double lamda) {
 
 NSArray *filelines(NSString *fname) {
 
+  // read file contents
+  NSString *contents = 
+    [NSString stringWithContentsOfFile:fname
+			      encoding:NSASCIIStringEncoding
+				 error:NULL];
+  // parse file lines into array
+  NSMutableArray *lines = 
+    [NSMutableArray arrayWithArray:
+		      [contents componentsSeparatedByString:@"\n"]];
+  //[NSCharacterSet newlineCharacterSet]]];
 
-    // read file contents
-    NSString *contents = 
-	[NSString stringWithContentsOfFile:fname
-				  encoding:NSASCIIStringEncoding
-				     error:NULL];
-    // parse file lines into array
-    NSMutableArray *lines = 
-	[NSMutableArray arrayWithArray:
-			    [contents componentsSeparatedByString:@"\n"]];
-    //[NSCharacterSet newlineCharacterSet]]];
+  // discard empty lines
+  int i;
+  for (i=0; i<[lines count]; i++)
+    if ([(NSString *)[lines objectAtIndex:i] length] == 0) {
+      [lines removeObjectAtIndex:i];
+      --i;
+    }
 
-    // discard empty lines
-    int i;
-    for (i=0; i<[lines count]; i++)
-	if ([(NSString *)[lines objectAtIndex:i] length] == 0) {
-	    [lines removeObjectAtIndex:i];
-	    --i;
-	}
-
-    return lines;
+  return lines;
 
 }	
 				   
@@ -896,37 +852,37 @@ NSArray *filelines(NSString *fname) {
 
 NSArray *filelines(NSString *fname) {
 
-    FILE *stream = fopen([fname UTF8String], "r");
-    // was open successful??
-    if (!stream)
-	return nil;
+  FILE *stream = fopen([fname UTF8String], "r");
+  // was open successful??
+  if (!stream)
+    return nil;
 
-    // initialize array
-    NSMutableArray *arr = [NSMutableArray array];
-    NSCharacterSet *cset = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t bytes_read;
-    NSString *st;
+  // initialize array
+  NSMutableArray *arr = [NSMutableArray array];
+  NSCharacterSet *cset = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+  char *line = NULL;
+  size_t len = 0;
+  ssize_t bytes_read;
+  NSString *st;
 
 
-    while ( ( bytes_read = getline(&line, &len, stream)) != -1 ) {
-	st = [[NSString stringWithCString:line
-				 encoding:NSASCIIStringEncoding]
+  while ( ( bytes_read = getline(&line, &len, stream)) != -1 ) {
+    st = [[NSString stringWithCString:line
+			     encoding:NSASCIIStringEncoding]
 		 stringByTrimmingCharactersInSet:cset];
 
-	// if the line is empty skip string
-	// otherwise add it to array
-	if ([st length])
-	    [arr addObject:st];
+    // if the line is empty skip string
+    // otherwise add it to array
+    if ([st length])
+      [arr addObject:st];
 	
-    }
+  }
 
-    // free the line pointer
-    free(line);
-    // close file
-    fclose(stream);
-    return arr;
+  // free the line pointer
+  free(line);
+  // close file
+  fclose(stream);
+  return arr;
 
 }
 
@@ -936,7 +892,7 @@ NSArray *filelines(NSString *fname) {
 // a destructor function for objc object (glib style)
 void object_release(void *obj) {
 
-    [(id)obj release];
+  [(id)obj release];
 
 }
 
@@ -946,17 +902,17 @@ void object_release(void *obj) {
 // // compress a directory
 void compress_dir(NSString *dpath) {
 
-    // change directory
-    chdir([[dpath stringByAppendingPathComponent:@".."] UTF8String]);
-    // get last path component of log_path for the tar file
-    NSString *lpath = [dpath lastPathComponent];
-    // generate compressed dir
-    NSString *cmd = [NSString stringWithFormat:@"tar cjf %@.tar.bz2 %@/",
-			      lpath, lpath];
-    system([cmd UTF8String]);
-    // delete uncompressed dir
-    cmd = [NSString stringWithFormat:@"rm -rf %@/", lpath];
-    system([cmd UTF8String]);
+  // change directory
+  chdir([[dpath stringByAppendingPathComponent:@".."] UTF8String]);
+  // get last path component of log_path for the tar file
+  NSString *lpath = [dpath lastPathComponent];
+  // generate compressed dir
+  NSString *cmd = [NSString stringWithFormat:@"tar cjf %@.tar.bz2 %@/",
+			    lpath, lpath];
+  system([cmd UTF8String]);
+  // delete uncompressed dir
+  cmd = [NSString stringWithFormat:@"rm -rf %@/", lpath];
+  system([cmd UTF8String]);
     
 }
 

@@ -8,8 +8,8 @@
 //***********************************************************************
 @interface Solution : NSObject {
 
-    Digraph *graph; // the solution graph
-    GSLVector *errors; // the errors per node
+  Digraph *graph; // the solution graph
+  GSLVector *errors; // the errors per node
 
 }
 
@@ -18,7 +18,7 @@
 - (id) init;
 
 - (id) initWithGraph:(Digraph *)g
-	   andErrors:(GSLVector *)v;
+           andErrors:(GSLVector *)v;
 
 - (void) dealloc;
 

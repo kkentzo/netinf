@@ -10,9 +10,9 @@
 
 + (id) dynamicsWithVars:(int)vars andTPoints:(int)tpoints {
 
-    return [[[Dynamics alloc] initWithVars:vars
-				  andTPoints:tpoints]
-	       autorelease];
+  return [[[Dynamics alloc] initWithVars:vars
+			      andTPoints:tpoints]
+	   autorelease];
 
 }
 
@@ -23,10 +23,10 @@
 	      andLabels:(NSArray *)names
 {
 
-    return [[[Dynamics alloc] initWithVars:vars
-				andTPoints:tpoints
-				 andLabels:names]
-	       autorelease];
+  return [[[Dynamics alloc] initWithVars:vars
+			      andTPoints:tpoints
+			       andLabels:names]
+	   autorelease];
 
 }
 
@@ -34,7 +34,7 @@
 
 + (id) dynamicsFromFile:(NSString *) fname {
 
-    return [[[Dynamics alloc] initFromFile:fname] autorelease];
+  return [[[Dynamics alloc] initFromFile:fname] autorelease];
 
 }
 
@@ -44,10 +44,10 @@
 
 - (id) init {
 
-    [self dealloc];
-    @throw [NSException exceptionWithName:@"BadInitCall"
-				   reason:@"Use initWith...: initializers"
-				 userInfo:nil];
+  [self dealloc];
+  @throw [NSException exceptionWithName:@"BadInitCall"
+				 reason:@"Use initWith...: initializers"
+			       userInfo:nil];
 
 }
 
@@ -58,9 +58,9 @@
 	 andTPoints:(int)tpoints
 {
 
-    return [self initWithVars:vars
-		   andTPoints:tpoints
-		    andLabels:nil];
+  return [self initWithVars:vars
+		 andTPoints:tpoints
+		  andLabels:nil];
 
 }
 
@@ -70,30 +70,30 @@
 	  andLabels:(NSArray *)names 
 {
 
-    // initialize super class (and mat)
-    self = [super initWithRows:tpoints
-		    andColumns:vars];
-    if (!self)
-	return nil;
+  // initialize super class (and mat)
+  self = [super initWithRows:tpoints
+		  andColumns:vars];
+  if (!self)
+    return nil;
 
-    // initialize labels
-    labels = [names retain];
+  // initialize labels
+  labels = [names retain];
 
-    return self;
+  return self;
 }
 
 
 
 - (id) initFromFile:(NSString *)fname {
 
-    self = [super initFromFile:fname];
-    if (!self)
-	return nil;
+  self = [super initFromFile:fname];
+  if (!self)
+    return nil;
 
-    // initialize labels
-    labels = nil;
+  // initialize labels
+  labels = nil;
 
-    return self;
+  return self;
 
 }
 
@@ -102,17 +102,17 @@
 
 - (id) copy {
 
-    // copy matrix
-    gsl_matrix *newmat = gsl_matrix_calloc(matrix->size1,
-					   matrix->size2);
-    // copy matrix elements
-    gsl_matrix_memcpy(newmat, matrix);
+  // copy matrix
+  gsl_matrix *newmat = gsl_matrix_calloc(matrix->size1,
+					 matrix->size2);
+  // copy matrix elements
+  gsl_matrix_memcpy(newmat, matrix);
 
-    // create new Dynamics object
-    Dynamics *newdyn = [[Dynamics alloc] initWithMatrix:newmat];
-    [newdyn setLabels:labels];
+  // create new Dynamics object
+  Dynamics *newdyn = [[Dynamics alloc] initWithMatrix:newmat];
+  [newdyn setLabels:labels];
 
-    return newdyn;
+  return newdyn;
 
 }
 
@@ -120,8 +120,8 @@
 
 - (void) dealloc {
 
-    [labels release];
-    [super dealloc];
+  [labels release];
+  [super dealloc];
 
 }
 
@@ -135,7 +135,7 @@
 	 atTPoint:(int)tpoint
 {
 
-    [self setValue:val atRow:tpoint andColumn:var];
+  [self setValue:val atRow:tpoint andColumn:var];
 
 }
 
@@ -144,7 +144,7 @@
 	     atTPoint:(int)tpoint
 {
 
-    return [self valueAtRow:tpoint andColumn:var];
+  return [self valueAtRow:tpoint andColumn:var];
 
 }
 
@@ -155,7 +155,7 @@
 
 - (NSArray *) labels {
 
-    return labels;
+  return labels;
 
 }
 
@@ -163,9 +163,9 @@
 
 - (void) setLabels:(NSArray *)names {
 
-    [names retain];
-    [labels release];
-    labels = names;
+  [names retain];
+  [labels release];
+  labels = names;
 
 }
 
@@ -173,8 +173,8 @@
 
 - (int) vars {
 
-    // number of columns
-    return [self columns];
+  // number of columns
+  return [self columns];
 
 }
 
@@ -182,8 +182,8 @@
 
 - (int) tpoints {
 
-    // number of rows
-    return [self rows];
+  // number of rows
+  return [self rows];
 
 }
 
@@ -191,22 +191,22 @@
 
 - (double) calcMSEwith:(Dynamics *)other {
 
-    int i, j;
-    int rows = [self rows];
-    int cols = [self columns];
-    double sdiff = 0;
+  int i, j;
+  int rows = [self rows];
+  int cols = [self columns];
+  double sdiff = 0;
 
-    NSAssert((rows == [other rows] && \
-	      cols == [other columns]),
-	     @"Misaligned matrices");
+  NSAssert((rows == [other rows] && \
+	    cols == [other columns]),
+	   @"Misaligned matrices");
 
-    for (i=0; i<rows; i++)
-	for (j=0; j<cols; j++)
-	    sdiff += pow([self valueAtRow:i andColumn:j] - \
-			 [other valueAtRow:i andColumn:j],
-			 2);
+  for (i=0; i<rows; i++)
+    for (j=0; j<cols; j++)
+      sdiff += pow([self valueAtRow:i andColumn:j] - \
+		   [other valueAtRow:i andColumn:j],
+		   2);
 
-    return sdiff / (rows * cols);
+  return sdiff / (rows * cols);
 
 }
 
@@ -216,49 +216,49 @@
 		 ofVar:(int)col
 {
 
-    int i;
-    int rows = [self rows];
-    double sdiff = 0;
+  int i;
+  int rows = [self rows];
+  double sdiff = 0;
 
-    NSAssert((rows == [other rows] && \
-	      [self columns] == [other columns]),
-	     @"Misaligned matrices");
+  NSAssert((rows == [other rows] && \
+	    [self columns] == [other columns]),
+	   @"Misaligned matrices");
 
-    for (i=0; i<rows; i++)
-	sdiff += pow([self valueAtRow:i andColumn:col] - \
-		     [other valueAtRow:i andColumn:col],
-		     2);
+  for (i=0; i<rows; i++)
+    sdiff += pow([self valueAtRow:i andColumn:col] - \
+		 [other valueAtRow:i andColumn:col],
+		 2);
 
-    return sdiff / rows;
+  return sdiff / rows;
 
 }
 
 
 - (GSLVector *) calcMSEVector:(Dynamics *)other {
 
-    int row, col;
-    int rows = [self rows];
-    int cols = [self columns];
+  int row, col;
+  int rows = [self rows];
+  int cols = [self columns];
 
-    NSAssert((rows == [other rows] && \
-	      cols == [other columns]),
-	     @"Misaligned matrices");
+  NSAssert((rows == [other rows] && \
+	    cols == [other columns]),
+	   @"Misaligned matrices");
 
-    // initialize vector of errors
-    GSLVector *errors = [GSLVector vectorWithSize:cols];
+  // initialize vector of errors
+  GSLVector *errors = [GSLVector vectorWithSize:cols];
 
-    // calc MSEs per variable (column)
-    for (col=0; col<cols; col++)
-	for (row=0; row<rows; row++)
-	    [errors addValue:pow([self valueAtRow:row andColumn:col] - \
-				 [other valueAtRow:row andColumn:col],
-				 2)
-		     atIndex:col];
+  // calc MSEs per variable (column)
+  for (col=0; col<cols; col++)
+    for (row=0; row<rows; row++)
+      [errors addValue:pow([self valueAtRow:row andColumn:col] - \
+			   [other valueAtRow:row andColumn:col],
+			   2)
+	       atIndex:col];
 
-    // calc mean of errors
-    [errors divideByValue:rows];
+  // calc mean of errors
+  [errors divideByValue:rows];
 
-    return errors;
+  return errors;
 
 }
 
